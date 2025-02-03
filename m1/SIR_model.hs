@@ -32,3 +32,21 @@ removeNthHelper _ [] _ = []
 removeNthHelper n (head:tail) count
     | count `mod` n == 0 = removeNthHelper n tail (count+1)
     | otherwise = head : removeNthHelper n tail (count+1) 
+
+-- 3 No lower case 
+
+
+smallChars :: String
+smallChars = ['a'..'z']
+
+noLowercaseStrings :: [String] -> [String]
+noLowercaseStrings [] = []
+noLowercaseStrings (head:tail) 
+    | lowerCaseChecker head = noLowercaseStrings tail 
+    | otherwise = head : noLowercaseStrings tail
+
+lowerCaseChecker :: String -> Bool
+lowerCaseChecker [] = False
+lowerCaseChecker (head:tail)
+    | head `elem` smallChars = True
+    | otherwise = lowerCaseChecker tail 
