@@ -1,7 +1,6 @@
-module SIR where 
+module M1 where 
 
-
--- 1.1
+-- 1 SIR-model
 
 
 sirSimulate :: Double -> Double -> Int -> Int -> (Int, Int, Int) -> [(Int, Int, Int)]
@@ -18,3 +17,18 @@ smittade beta gamma n (s, i, _) =  i + round((beta * fromIntegral s * fromIntegr
 
 återhämtade :: Double -> (Int, Int, Int) -> Int
 återhämtade gamma (_, i, r) = r + round(gamma * fromIntegral i)
+
+
+-- 2 Remove every n:th element
+
+removeEveryNth :: Int -> [a] -> [a]
+removeEveryNth _ [] = []
+removeEveryNth n v    
+    | n > length v = [] 
+    | otherwise = removeNthHelper n v 1 
+
+removeNthHelper :: Int -> [a] -> Int -> [a]
+removeNthHelper _ [] _ = []
+removeNthHelper n (head:tail) count
+    | count `mod` n == 0 = removeNthHelper n tail (count+1)
+    | otherwise = head : removeNthHelper n tail (count+1) 
