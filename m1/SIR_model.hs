@@ -25,7 +25,6 @@ smittade beta gamma n (s, i, _) =  i + round((beta * fromIntegral s * fromIntegr
 
 
 -- 2 Remove every n:th element
-
 removeEveryNth :: Int -> [a] -> [a]
 removeEveryNth _ [] = [] -- Basecase: If list is empty return an empty list
 removeEveryNth n v    
@@ -39,9 +38,11 @@ removeNthHelper n (head:tail) index
     | index `mod` n == 0 = removeNthHelper n tail (index+1) -- If the index is evenly divisible by n, skip that element by calling removeNthHelper on the tail
     | otherwise = head : removeNthHelper n tail (index+1) -- Otherwise add head to the list and call and removeNthHelper on the tail
 
+
 -- 3 No lower case 
+-- Introduce list of small letters defined globally
 smallChars :: String
-smallChars = ['a'..'z'] -- Introduce list of small letters defined globally
+smallChars = ['a'..'z'] 
 
 -- Returns a list if strings not containing small chars
 noLowercaseStrings :: [String] -> [String]
@@ -57,3 +58,13 @@ lowerCaseChecker (head:tail) -- Splits each string into chars in order to chech 
     | otherwise = lowerCaseChecker tail -- if the head if the string is not lower continue checking the rest of the String
 
 
+longestString :: [String] -> String
+longestString [] = []
+longestString v = foldl stringComparison "" v
+
+stringComparison :: String -> String -> String
+stringComparison string v
+    | length v > length string = v
+    | otherwise = string
+
+    
