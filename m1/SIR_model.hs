@@ -67,4 +67,28 @@ stringComparison string v
     | length v > length string = v
     | otherwise = string
 
+
+-- Define the Vec3 type
+data Vec3 = Vec3 Double Double Double
+  deriving (Show, Eq)
+
+-- Implement vector operations using an instance of Num
+instance Num Vec3 where
+  (Vec3 x1 y1 z1) + (Vec3 x2 y2 z2) = Vec3 (x1 + x2) (y1 + y2) (z1 + z2)
+  (Vec3 x1 y1 z1) - (Vec3 x2 y2 z2) = Vec3 (x1 - x2) (y1 - y2) (z1 - z2)
+  (Vec3 x1 y1 z1) * (Vec3 x2 y2 z2) = Vec3 (x1 * x2) (y1 * y2) (z1 * z2) -- Not standard vector multiplication
+  negate (Vec3 x y z) = Vec3 (-x) (-y) (-z)
+  abs (Vec3 x y z) = Vec3 (abs x) (abs y) (abs z)
+  signum (Vec3 x y z) = Vec3 (signum x) (signum y) (signum z)
+  fromInteger n = Vec3 (fromInteger n) (fromInteger n) (fromInteger n)
+
+reflect :: Vec3 -> Vec3 -> Vec3
+reflect incoming normal = incoming - scalarMul (2.0 * dotProduct incoming normal) normal
+
+dotProduct :: Vec3 -> Vec3 -> Double
+dotProduct (Vec3 x1 y1 z1) (Vec3 x2 y2 z2) = x1 * x2 + y1 * y2 + z1 * z2
+
+scalarMul :: Double -> Vec3 -> Vec3
+scalarMul double (Vec3 x y z) = Vec3 (double * x) (double * y) (double * z) 
+
     
