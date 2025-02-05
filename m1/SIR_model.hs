@@ -86,9 +86,31 @@ reflect :: Vec3 -> Vec3 -> Vec3
 reflect incoming normal = incoming - scalarMul (2.0 * dotProduct incoming normal) normal
 
 dotProduct :: Vec3 -> Vec3 -> Double
-dotProduct (Vec3 x1 y1 z1) (Vec3 x2 y2 z2) = x1 * x2 + y1 * y2 + z1 * z2
+dotProduct (Vec3 x1 x2 x3) (Vec3 y1 y2 y3) = x1 * y1 + x2 * y2 + x3 * y3
 
 scalarMul :: Double -> Vec3 -> Vec3
 scalarMul double (Vec3 x y z) = Vec3 (double * x) (double * y) (double * z) 
 
-    
+
+-- removeNegativeZ :: [Vec3] -> [Vec3]
+-- removeNegativeZ [] = []
+-- removeNegativeZ (head:tail) 
+--     | isNegative head = removeNegativeZ tail
+--     | otherwise = head : removeNegativeZ tail
+
+-- isNegative :: Vec3 -> Bool
+-- isNegative (Vec3 x y z) 
+--     | z < 0 = True
+--     | otherwise = False  
+
+removeNegativeZ :: [Vec3] -> [Vec3]
+removeNegativeZ = isNegative (\(Vec3 _ _ z) -> z >= 0)
+
+isNegative :: (Vec3 -> Bool) -> [Vec3] -> [Vec3]
+isNegative _ [] = []
+isNegative function (head:tail) 
+    | function head = head : isNegative function tail
+    | otherwise = isNegative function tail 
+
+
+
