@@ -1,7 +1,6 @@
 module M1 where 
 
 -- 1 SIR-model
-
 -- Funktion som räknar ut simulerar en bolkning under en pandemi (Susceptible, Infected och Recovered)
 sirSimulate :: Double -> Double -> Int -> Int -> (Int, Int, Int) -> [(Int, Int, Int)]
 sirSimulate _ _ _ 0 _ = [] -- Klar när vi har nått totala antalet dagar (steps=antalet dagar)
@@ -24,19 +23,36 @@ smittade beta gamma n (s, i, _) =  i + round((beta * fromIntegral s * fromIntegr
 återhämtade gamma (_, i, r) = r + round(gamma * fromIntegral i)
 
 
--- 2 Remove every n:th element
-removeEveryNth :: Int -> [a] -> [a]
-removeEveryNth _ [] = [] -- Basecase: If list is empty return an empty list
-removeEveryNth n v    
-    | n > length v = v -- If n is greater than the lenght of the list v ruturn empty listthe the 
-    | n == 1 = [] -- If n is 1, return an empty list
-    | otherwise = removeNthHelper n v 1 -- Remove every n:th element, introduce index which starts as 1
+-- -- 2 Remove every n:th element (utan svansrekrusion)
 
-removeNthHelper :: Int -> [a] -> Int -> [a]
-removeNthHelper _ [] _ = []
-removeNthHelper n (head:tail) index
-    | index `mod` n == 0 = removeNthHelper n tail (index+1) -- If the index is evenly divisible by n, skip that element by calling removeNthHelper on the tail
-    | otherwise = head : removeNthHelper n tail (index+1) -- Otherwise add head to the list and call and removeNthHelper on the tail
+-- removeEveryNth :: Int -> [a] -> [a]
+-- removeEveryNth _ [] = [] -- Basecase: If list is empty return an empty list
+-- removeEveryNth n v    
+--     -- If n is greater than the lenght of the list v ruturn empty list
+--     | n > length v = v 
+--     | n == 1 = [] -- If n is 1, return an empty list
+--     -- Remove every n:th element, introduce index which starts as 1
+--     | otherwise = removeNthHelper n v 1 
+
+-- removeNthHelper :: Int -> [a] -> Int -> [a]
+-- removeNthHelper _ [] _ = []
+-- removeNthHelper n (head:tail) index
+--     -- If the index is evenly divisible by n, skip that element by calling removeNthHelper on the tail
+--     | index `mod` n == 0 = removeNthHelper n tail (index+1) 
+--     -- Otherwise add head to the list and call and removeNthHelper on the tail
+--     | otherwise = head : removeNthHelper n tail (index+1) 
+
+
+-- 2 Remove every n:th element (svansrekrusion)
+removeEveryNth :: Int -> [a] -> [a]
+removeEveryNth n v = removeNthHelper n v 1 []
+
+removeNthHelper :: Int -> [a] -> Int -> [a] -> [a]
+removeNthHelper _ [] _ acc = acc
+removeNthHelper n (head:tail) index acc
+    | index `mod` n == 0 = removeNthHelper n tail (index + 1) acc
+    | otherwise = removeNthHelper n tail (index + 1) (acc ++ [head])
+
 
 
 -- 3 No lower case 
@@ -59,7 +75,6 @@ lowerCaseChecker (head:tail) -- Splits each string into chars in order to chech 
 
 
 longestString :: [String] -> String
-longestString [] = []
 longestString v = foldl stringComparison "" v
 
 stringComparison :: String -> String -> String
@@ -67,7 +82,7 @@ stringComparison string v
     | length v > length string = v
     | otherwise = string
 
-
+-- The following code was made by Marcus Dicander and 
 -- Define the Vec3 type
 data Vec3 = Vec3 Double Double Double
   deriving (Show, Eq)
@@ -82,6 +97,8 @@ instance Num Vec3 where
   signum (Vec3 x y z) = Vec3 (signum x) (signum y) (signum z)
   fromInteger n = Vec3 (fromInteger n) (fromInteger n) (fromInteger n)
 
+
+-- 5.1
 reflect :: Vec3 -> Vec3 -> Vec3
 reflect incoming normal = incoming - scalarMul (2.0 * dotProduct incoming normal) normal
 
@@ -104,13 +121,14 @@ scalarMul double (Vec3 x y z) = Vec3 (double * x) (double * y) (double * z)
 --     | otherwise = False  
 
 removeNegativeZ :: [Vec3] -> [Vec3]
-removeNegativeZ = isNegative (\(Vec3 _ _ z) -> z >= 0)
+ -- Filtrerar och har endast med de vektorer vars z värde är större än eller lika med 0
+removeNegativeZ = filter (\(Vec3 _ _ z) -> z >= 0)
 
-isNegative :: (Vec3 -> Bool) -> [Vec3] -> [Vec3]
-isNegative _ [] = []
-isNegative function (head:tail) 
-    | function head = head : isNegative function tail
-    | otherwise = isNegative function tail 
+reflectAndRemoveNegativeZ :: Vec3 -> [Vec3] -> [Vec3]
+reflectAndRemoveNegativeZ normal incomingVectors = (removeNegativeZ . map (orderChangeReflect normal)) incomingVectors
 
+
+orderChangeReflect :: Vec3 -> Vec3 -> Vec3
+orderChangeReflect normal incomingVectors = reflect incomingVectors normal
 
 
